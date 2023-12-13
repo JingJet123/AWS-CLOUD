@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Student Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+    <link rel="stylesheet" href="assets/extensions/choices.js/public/assets/styles/choices.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+
+
+    <style>
+        .theme-dark .select2-container--default .select2-selection--single,
+        .theme-dark .select2-dropdown {
+            background-color: #40404d !important;
+        }
+
+        .theme-dark .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #999 !important;
+        }
+
+        .theme-dark .select2-results .select2-results__options {
+            background-color: #435ebe;
+        }
+
+        .theme-dark .swal2-success-circular-line-right,
+        .theme-dark .swal2-success-circular-line-left,
+        .theme-dark .swal2-success-fix {
+            background-color: #1e1e2d !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        {# activePage is to determine which item to be active#}
+        {% set activePage = "profile" %}
+        {% set subActivePage = "updateIntern" %}
+        {% include "studentSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "studentHeader.html" %}
+            <div id="main-content">
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="order-md-1 order-last">
+                                <h3>Register Your Internship</h3>
+                                <p class="text-subtitle text-muted">You are required to fill in the form to proceed with
+                                    your internship program.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <section class="section">
+                        <div class="page-content">
+                            <div class="row">
+                                <form class="form" id="internshipRegistrationForm" data-parsley-validate
+                                    action="/AddInternship" method="POST" enctype="multipart/form-data">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4>Company Information</h4>
+                                            <p class="card-subtitle">Company Not registered? Submit a <a
+                                                    href="/requestCompany">External Company Request</a></p>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6 col-12">
+                                                    <div class="form-group mandatory">
+                                                        <label for="compName" class="form-label">Company Name</label>
+                                                        <select
+                                                            class="js-example-placeholder-single js-states form-select"
+                                                            data-parsley-required="true" name="compName">
+                                                            <option></option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-12">
+                                                    <div class="form-group mandatory">
+                                                        <label for="compAddr" class="form-label">Company Address</label>
+                                                        <textarea class="form-control" name="compAddr" rows="3"
+                                                            disabled></textarea>
+                                                        <input type="hidden" name="companyAddr" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-12">
+                                                    <div class="form-group mandatory">
+                                                        <label for="allowance" class="form-label">Internship Allowance
+                                                            (RM)</label>
+                                                        <input type="number" step="100" name="allowance"
+                                                            class="form-control" placeholder="eg: 1000"
+                                                            data-parsley-required="true" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4>Company Supervisor</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6 col-12">
+                                                    <div class="form-group mandatory">
+                                                        <label for="comSuName" class="form-label">Name</label>
+                                                        <input type="text" name="compSupName" class="form-control"
+                                                            placeholder="Company Supervisor Name"
+                                                            data-parsley-required="true" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-12">
+                                                    <div class="form-group mandatory">
+                                                        <label for="email" class="form-label">Email</label>
+                                                        <input type="email" name="email" class="form-control"
+                                                            placeholder="eg: supervisor@gmail.com"
+                                                            data-parsley-required="true" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4>Internship Documentation</h4>
+                                            <p class="card-subtitle">Please upload all the following documentation once
+                                                you
+                                                have secure a placement. Make sure you submit the correct file, you will
+                                                not
+                                                be able to modify after submitted</p>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row mt-3">
+                                                <div class="col col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-12 col-lg-8">
+                                                            <label for="comAcceptance" class="form-label">Company
+                                                                Acceptance
+                                                                Form</label>
+                                                        </div>
+                                                        <div class="col-12 col-lg-4">
+                                                            <span><a href="https://yeehao-yenni-sheeyeap-jiajie-jingjet.s3.amazonaws.com/Attachment/Company+Acceptance+Letter.docx"
+                                                                    download="Company Acceptance Form">Download
+                                                                    Template</a></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <input type="file" id="comAcceptance" class="form-control"
+                                                        accept="application/pdf" name="comAcceptance"
+                                                        data-parsley-required="true" />
+                                                </div>
+
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-12 col-lg-8">
+                                                            <label for="parentForm" class="form-label">Parent
+                                                                Acknowledgement Form</label>
+                                                        </div>
+                                                        <div class="col-12 col-lg-4">
+                                                            <span><a href="https://yeehao-yenni-sheeyeap-jiajie-jingjet.s3.amazonaws.com/Attachment/Parent+Acknowledgement+Form.docx"
+                                                                    download="Parent Acknowledgement Form">Download
+                                                                    Template</a></span>
+                                                        </div>
+                                                    </div>
+                                                    <input type="file" id="parentForm" class="form-control"
+                                                        accept="application/pdf" name="parentForm"
+                                                        data-parsley-required="true" />
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col col-lg-6">
+                                                    <div class="row">
+                                                        <div class="col-12 col-lg-8">
+                                                            <label for="letter" class="form-label">Letter Of
+                                                                Indemnity</label>
+                                                        </div>
+                                                        <div class="col-12 col-lg-4">
+                                                            <span><a href="https://yeehao-yenni-sheeyeap-jiajie-jingjet.s3.amazonaws.com/Attachment/Indemnity+Letter.docx"
+                                                                    download="Letter Of Indemnity">Download
+                                                                    Template</a></span>
+                                                        </div>
+                                                    </div>
+                                                    <input type="file" id="letter" class="form-control" name="letter"
+                                                        accept="application/pdf" data-parsley-required="true" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 d-flex justify-content-end">
+                                            <button type="submit" class="btn btn-primary me-1 mb-1">
+                                                Submit
+                                            </button>
+                                            <button type="reset" class="btn btn-light-secondary me-1 mb-1">
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                {% include "footer.html" %}
+
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/extensions/jquery/jquery.min.js"></script>
+    <script src="assets/extensions/parsleyjs/parsley.min.js"></script>
+    <script src="assets/js/pages/parsley.js"></script>
+    <script src="assets/extensions/choices.js/public/assets/scripts/choices.js"></script>
+    <script src="assets/js/pages/form-element-select.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>
+    <script src="assets/js/pages/sweetalert2.js"></script>
+
+
+    <script>
+
+
+        var companies = JSON.parse('{{companies|tojson}}');
+        console.log(companies)
+        //initialize select2
+        $(document).ready(function () {
+            $('.js-example-placeholder-single').select2({
+                placeholder: 'Select a Company',
+                data: companies.map(function (item) {
+                    return {
+                        id: item.compName,
+                        text: item.compName
+                    }
+                })
+            });
+        });
+
+        //auto update company address based on company name
+        $(document).ready(function () {
+            $(".js-example-placeholder-single").change(function () {
+                var compName = $(this).val();
+                var compAddr = companies.find(x => x.compName === compName).compAddr;
+                $("textarea[name='compAddr']").val(compAddr);
+                $("input[name='companyAddr']").val(compAddr);
+            });
+        });
+
+        //reset button, reset all input field
+        $(document).ready(function () {
+            $("button[type='reset']").click(function () {
+                $("#registerForm").trigger("reset");
+                $('.js-example-placeholder-single').val(null).trigger('change');
+            });
+        });
+
+    </script>
+
+    {% if requestCompMessage %}
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Request Submitted',
+            text: '{{requestCompMessage}}'
+        })
+    </script>
+    {% endif %}
+
+</body>
+
+</html>

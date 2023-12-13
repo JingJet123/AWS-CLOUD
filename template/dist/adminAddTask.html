@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Admin Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+
+    <link rel="stylesheet" href="https://github.com/downloads/lafeber/world-flags-sprite/flags32.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+</head>
+
+<body>
+    <div id="app">
+        {% set activePage = 'task' %}
+        {% include "adminSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "adminHeader.html" %}
+            <div id="main-content">
+                <form class="form" id="newTaskForm" data-parsley-validate action="/AddTask" method="POST"
+                    enctype="multipart/form-data">
+
+                    <div class="page-heading">
+                        <div class="page-title">
+                            <div class="row">
+                                <div class="col-12 col-lg-8">
+                                    <h3>Create New Task</h3>
+                                    <p class="text-subtitle text-muted">You can create, edit or delete internship
+                                        program
+                                        task for student here</p>
+                                </div>
+                                <div class="col-12 col-lg-3 d-flex justify-content-end align-items-end experience">
+                                    <a type="button" href="/adminTaskManage" id="back"
+                                        class="btn btn-secondary me-1 mb-1">
+                                        Back
+                                    </a>
+                                    <button type="submit" id="save" class="btn btn-primary me-1 mb-1">
+                                        Add Task
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="main-content">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Task Information</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mandatory">
+                                                <label for="taskTitle" class="form-label">Task Title</label>
+                                                <input type="text" id="taskTitle" class="form-control" name="taskTitle"
+                                                    placeholder="e.g: January Progress Report Session 202205"
+                                                    data-parsley-required="true" />
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mandatory">
+                                                <label for="taskDueDate" class="form-label">Task Due Date</label>
+                                                <input type="date" id="taskDueDate" class="form-control"
+                                                    name="taskDueDate" data-parsley-required="true" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mb-3 mandatory">
+                                                <label for="form-check" class="form-label">Assign To</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="assignTo"
+                                                        value="diploma" id="diploma">
+                                                    <label class="form-check-label" for="diploma">
+                                                        Diploma
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="assignTo"
+                                                        value="degree" id="degree">
+                                                    <label class="form-check-label" for="degree">
+                                                        Degree
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="assignTo"
+                                                        value="diplomaAndDegree" id="diplomaAndDegree" checked>
+                                                    <label class="form-check-label" for="diplomaAndDegree">
+                                                        Diploma and Degree
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mandatory">
+                                                <label for="attachment" class="form-label">Template Attachment</label>
+                                                <input type="file" id="attachment" class="form-control"
+                                                    name="attachment" data-parsley-required="true" />
+                                                <span>You have uploaded: <a id="fileName" download></a></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-12">
+                                            <div class="form-group mb-3 mandatory">
+                                                <label for="taskDesc" class="form-label">Task Description</label>
+                                                <textarea class="form-control" id="taskDesc" rows="8"
+                                                    placeholder="Enter Task Description here. e.g: This task is to create a progress report for the month of January 2022."
+                                                    name="taskDesc" data-parsley-required="true"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+
+    <script src="assets/extensions/jquery/jquery.min.js"></script>
+    <script src="//code.jquery.com/jquery-3.7.0.js"></script>
+
+    <script src="assets/extensions/parsleyjs/parsley.min.js"></script>
+    <script src="assets/js/pages/parsley.js"></script>
+
+    <script>
+        //set due date cannot be earlier than today
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementsByName("taskDueDate")[0].setAttribute('min', today);
+
+        //get file object when user upload file
+        var file = document.getElementById("attachment");
+        file.onchange = function () {
+            if (file.files.length > 0) {
+                document.getElementById('fileName').innerHTML = file.files[0].name;
+            }
+        };
+
+    </script>
+
+</body>
+
+</html>

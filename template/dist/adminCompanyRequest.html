@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Admin Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+
+    <link rel="stylesheet" href="https://github.com/downloads/lafeber/world-flags-sprite/flags32.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+
+    <style>
+        .theme-dark .swal2-success-circular-line-right,
+        .theme-dark .swal2-success-circular-line-left,
+        .theme-dark .swal2-success-fix {
+            background-color: #1e1e2d !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        {% set activePage = 'comRequest' %}
+        {% include "adminSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "adminHeader.html" %}
+            <div id="main-content">
+
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-12 col-md-6 order-md-1 order-last">
+                                <h3>Student Company Request</h3>
+                                <p class="text-subtitle text-muted">These are the external company request posted by
+                                    students</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="main-content">
+                        <!-- Vertically Centered modal Modal -->
+                        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+                                role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalCenterTitle">Request Detail
+                                        </h5>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <i data-feather="x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <label for="comName" class="form-label">Company Name</label>
+                                                <input type="text" name="comName" class="form-control" disabled />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <label for="comAddr" class="form-label">Company
+                                                    Address</label>
+                                                <textarea class="form-control" name="comAddr" rows="3"
+                                                    disabled></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group mandatory">
+                                                <label for="email" class="form-label">Student Email</label>
+                                                <input type="email" name="email" class="form-control" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form id="myForm" action="/UpdateCompReq">
+                                            <input type="hidden" name="requestId" id="requestId" value="" />
+                                            <input type="hidden" name="status" id="status" value="" />
+                                            <button type="button" class="btn btn-light-secondary"
+                                                data-bs-dismiss="modal">
+                                                <i class="bx bx-x d-block d-sm-none"></i>
+                                                <span class="d-none d-sm-block">Close</span>
+                                            </button>
+                                            <button type="submit" id="reject" class="btn btn-danger ml-1"
+                                                data-bs-dismiss="modal">
+                                                <i class="bx bx-check d-block d-sm-none"></i>
+                                                <span class="d-none d-sm-block">Reject</span>
+                                            </button>
+                                            <button type="submit" id="approve" class="btn btn-primary ml-1"
+                                                data-bs-dismiss="modal">
+                                                <i class="bx bx-check d-block d-sm-none"></i>
+                                                <span class="d-none d-sm-block">Approve</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <table id="table1" class="display nowrap" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Request ID</th>
+                                            <th>Company Name</th>
+                                            <th>Student Email</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+
+    <script src="assets/extensions/jquery/jquery.min.js"></script>
+    <script src="//code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="assets/js/pages/simple-datatables.js"></script>
+    <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>>
+    <script src="assets/js/pages/sweetalert2.js"></script>
+
+    {% if success %}
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Approved',
+            text: '{{success}}',
+        })
+    </script>
+    {% endif %}
+
+    {% if reject %}
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Rejected',
+            text: '{{reject}}',
+        })
+    </script>
+    {% endif %}
+
+
+    <script>
+        //define an array of object with id, company name, student email, status in dummy data
+        var data = [];
+
+        {% for compReq in compReqs %}
+        data.push({
+            "id": "{{ compReq.requestId }}",
+            "companyName": "{{ compReq.companyName }}",
+            "companyAddress": "{{ compReq.companyAddress }}",
+            "studentEmail": "{{ compReq.studentEmail }}",
+            "status": "{{ compReq.requestStatus }}"
+        });
+        {% endfor %}
+
+        //define datatable
+        var table = $('#table1').DataTable({
+            "data": data,
+            "columns": [
+                { "data": "id" },
+                { "data": "companyName" },
+                { "data": "studentEmail" },
+                {
+                    "data":
+                        //use badge for status
+                        function (data) {
+                            if (data.status == "Pending") {
+                                return "<span class='badge bg-warning'>Pending</span>";
+                            } else if (data.status == "Approved") {
+                                return "<span class='badge bg-success'>Approved</span>";
+                            } else {
+                                return "<span class='badge bg-danger'>Rejected</span>";
+                            }
+                        }
+                },
+                {
+                    "data": null,
+                    "defaultContent": "<button data-bs-toggle='modal'data-bs-target='#exampleModalCenter' class='btn btn-primary'>View</button>"
+                }
+            ]
+        });
+
+        //view on click, get the data from the row and display in modal
+        $('#table1 tbody').on('click', 'button', function () {
+            var data = table.row($(this).parents('tr')).data();
+            //set the value of the input field in modal
+            $("input[name='comName']").val(data.companyName);
+            $("textarea[name='comAddr']").val(data.companyAddress);
+            $("input[name='email']").val(data.studentEmail);
+            //set request id into approve and reject button
+            $("#requestId").val(data.id);
+        });
+
+        //click approve button, pop up sweet alert, update to the array of object, rerender the table
+        $("#approve").click(function () {
+            $("#status").val("Approved");
+
+        });
+
+        //click reject button, pop up sweet alert, update to the array of object, rerender the table
+        $("#reject").click(function () {
+            $("#status").val("Rejected");
+
+        });
+
+        //disable the button if the status is not pending
+        $('#table1 tbody').on('click', 'button', function () {
+            var data = table.row($(this).parents('tr')).data();
+            if (data.status != "Pending") {
+                $("#approve").prop("disabled", true);
+                $("#reject").prop("disabled", true);
+            } else {
+                $("#approve").prop("disabled", false);
+                $("#reject").prop("disabled", false);
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>

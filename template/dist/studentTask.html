@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Student Task</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+</head>
+
+<body>
+    <div id="app">
+        {# activePage is to determine which item to be active#}
+        {% set activePage = "task" %}
+        {% include "studentSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "studentHeader.html" %}
+            <div id="main-content">
+
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-12 col-md-6 order-md-1 order-last">
+                                <h3>Task and Assignment</h3>
+                                <p class="text-subtitle text-muted">View your task here and submit before due date.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <section class="section">
+                        <div class="section-header">
+                            <h5 class="heading">Pending Task</h5>
+                            <hr>
+                        </div>
+                        <div class="page-content">
+                            <ul id="pendingTaskList" style="list-style-type:none;">
+                            </ul>
+                        </div>
+                    </section>
+                    <section class="section">
+                        <div class="section-header">
+                            <h5 class="heading">Completed Task</h5>
+                            <hr>
+                        </div>
+                        <div class="page-content">
+                            <ul id="completedTaskList" style="list-style-type:none;">
+                            </ul>
+                        </div>
+                    </section>
+                </div>
+
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/extensions/jquery/jquery.min.js"></script>
+    <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>
+    <script src="assets/js/pages/sweetalert2.js"></script>
+
+    <script>
+        //get pendingTask and completedTask from backend
+        var completedTask = [];
+        {% for task in cptdTask %}
+        completedTask.push({
+            submissionId: "{{task.submissionId}}",
+            taskTitle: "{{task.taskName}}",
+            taskDescription: "{{task.taskDesc}}",
+            taskDueDate: "{{task.dueDate}}",
+            taskAttachment: {
+                attachmentName: "{{task.attachmentName}}",
+                attachmentUrl: "{{task.attachmentUrl}}"
+            },
+            submissionStatus: "{{task.submissionStatus}}"
+        })
+        {% endfor %}
+
+        var pendingTask = [];
+        {% for task in pdngTask %}
+        pendingTask.push({
+            submissionId: "{{task.submissionId}}",
+            taskTitle: "{{task.taskName}}",
+            taskDescription: "{{task.taskDesc}}",
+            taskDueDate: "{{task.dueDate}}",
+            taskAttachment: {
+                attachmentName: "{{task.attachmentName}}",
+                attachmentUrl: "{{task.attachmentURL}}"
+            },
+            submissionStatus: "{{task.submissionStatus}}"
+        })
+        {% endfor %}
+
+        console.log(completedTask);
+        console.log(pendingTask);
+
+        //create html for task list
+        function createPendingTaskList() {
+            var taskList = "";
+            for (var i = 0; i < pendingTask.length; i++) {
+                taskList += "<li><div class='card' data-bs-toggle='collapse' href='#task" + pendingTask[i].submissionId +
+                    "' role='button' aria-expanded='false' aria-controls='task" + pendingTask[i].submissionId +
+                    "'><div class='card-content'><div class='card-body'><div class='row'><div class='col-12 col-lg-1'><div class='avatar bg-primary me-3'><span class='avatar-content'><i class='bi bi-envelope'></i></span></div></div><div class='col-12 col-lg-8'><h5>" +
+                    pendingTask[i].taskTitle + "</h5></div><div class='col-12 col-lg-3'>Due " + pendingTask[i].taskDueDate +
+                    "</div></div><div class='collapse' id='task" + pendingTask[i].submissionId + "'><hr><p id='taskDescription'>" +
+                    pendingTask[i].taskDescription + "</p><p class='list-group' id='attachment'><h6>Attachment</h6>";
+
+                taskList += "<a class='list-group-item' href='" + pendingTask[i].taskAttachment.attachmentUrl +
+                    "' download><p>" + pendingTask[i].taskAttachment.attachmentName + "</p></a>";
+
+                taskList += "</p><hr><div class='row'><div class='col-12 d-flex justify-content-end'><button type='viewTask' class='btn btn-primary me-1 mb-1' id='viewTask'>View Instruction</button></div></div></div></div></div></div></li>";
+            }
+            return taskList;
+        }
+
+        //create html for completed task list
+        function createCompletedTaskList() {
+            var taskList = "";
+            for (var i = 0; i < completedTask.length; i++) {
+                taskList += "<li><div class='card' data-bs-toggle='collapse' href='#task" + completedTask[i].submissionId +
+                    "' role='button' aria-expanded='false' aria-controls='task" + completedTask[i].submissionId +
+                    "'><div class='card-content'><div class='card-body'><div class='row'><div class='col-12 col-lg-1'><div class='avatar bg-secondary me-3'><span class='avatar-content'><i class='bi bi-envelope'></i></span></div></div><div class='col-12 col-lg-8'><h5>" +
+                    completedTask[i].taskTitle + "</h5></div><div class='col-12 col-lg-3'>Due " + completedTask[i].taskDueDate +
+                    "</div></div><div class='collapse' id='task" + completedTask[i].submissionId + "'><hr><p id='taskDescription'>" +
+                    completedTask[i].taskDescription + "</p><p class='list-group' id='attachment'><h6>Attachment</h6>";
+
+                taskList += "<a class='list-group-item' href='" + completedTask[i].taskAttachment.attachmentUrl +
+                    "' download><p>" + completedTask[i].taskAttachment.attachmentName + "</p></a>";
+
+                taskList += "</p><hr><div class='row'><div class='col-12 d-flex justify-content-end'><button type='viewTask' class='btn btn-primary me-1 mb-1' id='viewTask'>View Instruction</button></div></div></div></div></div></div></li>";
+            }
+            return taskList;
+        }
+
+        //display pendingTaskList and completedTaskList
+        $('#pendingTaskList').html(createPendingTaskList());
+        $('#completedTaskList').html(createCompletedTaskList());
+
+        //click view button, get the task id, direct to view task page with task id as parameter
+        $('#pendingTaskList').on('click', '#viewTask', function () {
+            var submissionId = $(this).closest('li').find('.card').attr('href').replace('#task', '');
+            window.location.href = "/viewTask?submissionId=" + submissionId + "&submissionStatus=pending";
+        });
+
+        //click view button, get the task id, direct to view task page with task id as parameter
+        $('#completedTaskList').on('click', '#viewTask', function () {
+            var submissionId = $(this).closest('li').find('.card').attr('href').replace('#task', '');
+            window.location.href = "/viewTask?submissionId=" + submissionId + "&submissionStatus=submitted";
+        });
+    </script>
+</body>
+
+</html>

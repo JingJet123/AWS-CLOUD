@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Lecturer Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+    <style>
+        .theme-dark .swal2-success-circular-line-right,
+        .theme-dark .swal2-success-circular-line-left,
+        .theme-dark .swal2-success-fix {
+            background-color: #1e1e2d !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        {% set activePage = "student" %}
+        {% include "supervisorSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "supervisorHeader.html" %}
+
+            <div id="main-content">
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="page-title">
+                            <div class="row">
+                                <div class="col-12 col-md-6 order-md-1 order-last">
+                                    <h3>Student Report</h3>
+                                    <p class="text-subtitle text-muted">Name: {{student.name}} [{{student.studId}}]</p>
+                                </div>
+                                <div class="col-12 col-md-6 order-md-2 order-first">
+                                    <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                                        <ol class="breadcrumb">
+                                            <li class="breadcrumb-item"><a href="/supervisorHome">Dashboard</a></li>
+                                            <li class="breadcrumb-item"><a href="/studentProgress">My Students</a></li>
+                                            <li class="breadcrumb-item active" aria-current="page">Student Report</li>
+                                        </ol>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="main-content">
+                        <section id="submissionList">
+
+                            <!-- <form class="form" id="reportUpdateForm" data-parsley-validate action="" method="POST"
+                                enctype="multipart/form-data">
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="card-body">
+                                            <h4 id="reportTitle" class="card-title">Report 1</h4>
+                                            <div class="row my-3">
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <div class="form-group mb-3 mandatory">
+                                                        <label for="form-check" class="form-label">Update Status</label>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="updateStatus" value="approve" id="approve"
+                                                                data-parsley-required="true">
+                                                            <label class="form-check-label" for="approve">
+                                                                <span class="badge bg-success me-1 mb-1">Approve</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="updateStatus" value="reject" id="reject"
+                                                                data-parsley-required="true">
+                                                            <label class="form-check-label" for="reject">
+                                                                <span class="badge bg-danger me-1 mb-1">Reject</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <h6 class="card-subtitle">Report</h6>
+                                                    <a id="reportUrl" class="card-text" download></a>
+                                                </div>
+                                            </div>
+                                            <div class="row my-3">
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <h6 class="card-subtitle">Submitted Date</h6>
+                                                    <p id="reportDate" class="card-text"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row my-3">
+                                                <div class="col-md-6 mb-6">
+                                                    <div class="form-group mb-3 mandatory">
+                                                        <label for="reportRemark" class="form-label">Supervisor
+                                                            Remark</label>
+                                                        <textarea class="form-control" id="reportRemark" rows="3"
+                                                            placeholder="Put your remark here." name="reportRemark"
+                                                            data-parsley-required="true"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer d-flex justify-content-end">
+                                            <button id="updateReport" type="submit"
+                                                class="btn btn-primary me-1 mb-1">Save</button>
+                                            <button id="clear" type="reset"
+                                                class="btn btn-outline-secondary me-1 mb-1">Clear</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form> -->
+                        </section>
+                    </div>
+
+                    {% include "footer.html" %}
+                </div>
+            </div>
+        </div>
+        <script src="assets/js/bootstrap.js"></script>
+        <script src="assets/js/app.js"></script>
+        <script src="assets/extensions/jquery/jquery.min.js"></script>
+        <script src="//code.jquery.com/jquery-3.7.0.js"></script>
+        <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="assets/js/pages/simple-datatables.js"></script>
+        <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>>
+        <script src="assets/js/pages/sweetalert2.js"></script>
+        <script src="assets/extensions/parsleyjs/parsley.min.js"></script>
+        <script src="assets/js/pages/parsley.js"></script>
+
+        {% if success %}
+        <script>
+            Swal.fire({
+                title: "Report Updated",
+                text: "{{success}}",
+                icon: "success",
+            })
+        </script>
+        {% endif %}
+
+        <script>
+            //define a list of student object with student name, student id, gender, programme, contact number, email, company name
+            var submissions = []
+            {% for sub in studSubmissions %}
+            submissions.push({
+                submissionId: `{{sub.submissionId}}`,
+                submissionStatus: `{{sub.reportStatus}}`,
+                taskId: `{{sub.taskId}}`,
+                taskName: `{{sub.taskTitle}}`,
+                submissionDate: `{{sub.dateSubmitted}}`,
+                reportUrl: `{{sub.report}}`,
+                dueDate: `{{sub.dueDate}}`,
+                reportRemark: `{{sub.remarks}}`,
+
+            })
+            {% endfor %}
+
+            var submissionList = document.getElementById("submissionList");
+
+            function drawForm(submission) {
+                for (var i = 0; i < submission.length; i++) {
+                    var submissionStatus = submission[i].submissionStatus;
+                    var submissionId = submission[i].submissionId;
+                    var taskId = submission[i].taskId;
+                    var taskName = submission[i].taskName;
+                    var submissionDate = submission[i].submissionDate;
+                    var reportUrl = submission[i].reportUrl;
+                    var dueDate = submission[i].dueDate;
+                    var reportRemark = submission[i].reportRemark;
+
+                    if (submissionDate != "None" && submissionStatus == "") {
+                        submissionList.innerHTML += `
+                <form class="form" id="reportUpdateForm?`+ submissionId + `" data-parsley-validate action='/UpdateReportStatus' method='POST'>
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="card-body">
+                                            <input type='hidden' name='studentEmail' value='`+ `{{student.studEmail}}` + `'>
+                                            <input type='hidden' name='submissionId' value='`+ submissionId + `'>
+                                            <h4 id="reportTitle" class="card-title">`+ taskName + ` [Due: ` + dueDate + ` ]</h4>
+                                            <div class="row my-3">
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <div class="form-group mb-3 mandatory">
+                                                        <label for="form-check" class="form-label">Update Status</label>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="updateStatus" value="Approved" id="approve"
+                                                                data-parsley-required="true">
+                                                            <label class="form-check-label" for="approve">
+                                                                <span class="badge bg-success me-1 mb-1">Approve</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="updateStatus" value="Rejected" id="reject"
+                                                                data-parsley-required="true">
+                                                            <label class="form-check-label" for="reject">
+                                                                <span class="badge bg-danger me-1 mb-1">Reject</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <h6 class="card-subtitle">Report</h6>
+                                                    <a id="reportUrl" href="`+ reportUrl + `" class="card-text" download>` + taskName + `</a>
+                                                </div>
+                                            </div>
+                                            <div class="row my-3">
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <h6 class="card-subtitle">Submitted Date</h6>
+                                                    <p id="reportDate" class="card-text">`+ submissionDate + `</p>
+                                                </div>
+                                            </div>
+                                            <div class="row my-3">
+                                                <div class="col-md-6 mb-6">
+                                                    <div class="form-group mb-3 mandatory">
+                                                        <label for="reportRemark" class="form-label">Supervisor
+                                                            Remark</label>
+                                                        <textarea class="form-control" id="reportRemark" rows="3"
+                                                            placeholder="Put your remark here." name="reportRemark"
+                                                            data-parsley-required="true"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer d-flex justify-content-end">
+                                            <button id="updateReport" type="submit"
+                                                class="btn btn-primary me-1 mb-1">Save</button>
+                                            <button id="clear" type="reset"
+                                                class="btn btn-outline-secondary me-1 mb-1">Clear</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                `;
+                    } else if (submissionDate == "None") {
+                        //display alert message in html to show that there is no submission for the task id, task name, and due date
+                        submissionList.innerHTML += `
+                        <div class="alert alert-info my-3" role="alert">
+                            <h4 class="alert-heading">No Submission</h4>
+                            <p>There is no submission for the Task Id:`+ taskId + `, Task name: ` + taskName + `, with Due date: ` + dueDate + `.</p>
+                            <hr>
+                            <p class="mb-0">Please contact the student to submit the report.</p>
+                        </div>
+                        `;
+                    } else if (submissionStatus == "Approved" || submissionStatus == "Rejected") {
+                        var bg = "";
+                        if (submissionStatus == "Approved") {
+                            bg = "bg-success";
+                        } else {
+                            bg = "bg-danger";
+                        }
+                        submissionList.innerHTML += `
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="card-body">
+                                            <h4 id="reportTitle" class="card-title">`+ taskName + ` [Due: ` + dueDate + ` ] <span class="badge ` + bg + `">` + submissionStatus + `</span></h4>
+                                            <div class="row my-3">
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <div class="form-group mb-3 mandatory">
+                                                        <label for="form-check" class="form-label">Update Status</label>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="updateStatus" value="Approved" id="approve"
+                                                                data-parsley-required="true" disabled>
+                                                            <label class="form-check-label" for="approve">
+                                                                <span class="badge bg-success me-1 mb-1">Approve</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="updateStatus" value="Rejected" id="reject"
+                                                                data-parsley-required="true" disabled>
+                                                            <label class="form-check-label" for="reject">
+                                                                <span class="badge bg-danger me-1 mb-1">Reject</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <h6 class="card-subtitle">Report</h6>
+                                                    <a id="reportUrl" href="`+ reportUrl + `" class="card-text" download>` + taskName + `</a>
+                                                </div>
+                                            </div>
+                                            <div class="row my-3">
+                                                <div class="col-12 col-lg-6 col-md-6">
+                                                    <h6 class="card-subtitle">Submitted Date</h6>
+                                                    <p id="reportDate" class="card-text">`+ submissionDate + `</p>
+                                                </div>
+                                            </div>
+                                            <div class="row my-3">
+                                                <div class="col-md-6 mb-6">
+                                                    <div class="form-group mb-3 mandatory">
+                                                        <label for="reportRemark" class="form-label">Supervisor
+                                                            Remark</label>
+                                                        <textarea class="form-control" id="reportRemark" rows="3"
+                                                            placeholder="`+ reportRemark + `" name="reportRemark"
+                                                            data-parsley-required="true" disabled></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                `;
+                    }
+                }
+            }
+
+            //document ready function
+            $(document).ready(function () {
+                console.log(submissions)
+                drawForm(submissions);
+            });
+
+    
+
+
+
+        </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Company Job Details</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+
+    <link rel="stylesheet" href=" https://github.com/downloads/lafeber/world-flags-sprite/flags32.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+
+    <style>
+        .theme-dark .form-select {
+            color: #c2c2d9 !important;
+        }
+
+        .theme-dark .swal2-success-circular-line-right,
+        .theme-dark .swal2-success-circular-line-left,
+        .theme-dark .swal2-success-fix {
+            background-color: #1e1e2d !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        {# activePage is to determine which item to be active#}
+        {% set activePage = "job" %}
+        {% include "companySidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "companyHeader.html" %}
+            <div id="main-content">
+
+                <div class="page-heading">
+                    <form class="form" id="jobPostForm" data-parsley-validate method="POST" action="/UpdateJobDetail">
+                        <div class="page-title">
+                            <div class="row">
+                                <div class="col-12 col-lg-9">
+                                    <h3>Job Post Detail</h3>
+                                    <p class="text-subtitle text-muted">You may view and edit the job post here.</p>
+
+                                </div>
+                                <div class="col-12 col-lg-3 d-flex justify-content-end align-items-end experience">
+                                    <button type="button" id="back" class="btn btn-secondary me-1 mb-1">
+                                        Back
+                                    </button>
+                                    <button type="button" id="backEdit" class="btn btn-secondary me-1 mb-1">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" id="save" class="btn btn-primary me-1 mb-1">
+                                        Save
+                                    </button>
+                                    <button type="button" id="edit" class="btn btn-primary me-1 mb-1">
+                                        Edit
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div id="main-content">
+
+                            <input type="hidden" name="jobId" value="{{ job.jobId }}" />
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Job Information</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mandatory">
+                                                <label for="jobTitle" class="form-label">Job Title</label>
+                                                <input type="text" id="jobTitle" class="form-control" name="jobTitle"
+                                                    placeholder="e.g: Software Engineer" data-parsley-required="true" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="form-group mb-3 mandatory">
+                                                <label for="form-check" class="form-label">Open For</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="openFor"
+                                                        value="diploma" id="diploma">
+                                                    <label class="form-check-label" for="diploma">
+                                                        Diploma
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="openFor"
+                                                        value="degree" id="degree">
+                                                    <label class="form-check-label" for="degree">
+                                                        Degree
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="openFor"
+                                                        value="diplomaAndDegree" id="diplomaAndDegree" checked>
+                                                    <label class="form-check-label" for="diplomaAndDegree">
+                                                        Diploma and Degree
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group mb-3 mandatory">
+                                                <label for="jobDesc" class="form-label">Job Description</label>
+                                                <textarea class="form-control" id="jobDesc" rows="8"
+                                                    placeholder="Enter Job Description here. You may include qualification and job requirement"
+                                                    name="jobDesc" data-parsley-required="true"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Job Specification</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mandatory">
+                                                <label for="allowance" class="form-label">Allowance (RM)</label>
+                                                <input type="number" step="100" id="allowance" class="form-control"
+                                                    name="allowance" placeholder="e.g: 1000"
+                                                    data-parsley-required="true" />
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mandatory">
+                                                <label for="accessory" class="form-label">Accessory Provided</label>
+                                                <small class="text-muted">Note: Please enter "None" if no accessory
+                                                    provided</i></small>
+                                                <input type="text" id="accessory" class="form-control" name="accessory"
+                                                    placeholder="e.g: Laptop, Mouse, Keyboard"
+                                                    data-parsley-required="true" />
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mandatory">
+                                                <label for="workDay" class="form-label">Working Day</label>
+                                                <input type="text" id="workingDay" class="form-control"
+                                                    name="workingDay" placeholder="e.g: Monday - Friday"
+                                                    data-parsley-required="true" />
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mandatory">
+                                                <label for="workHour" class="form-label">Working Day</label>
+                                                <input type="text" id="workingHour" class="form-control"
+                                                    name="workingHour" placeholder="e.g: 9.00am - 5.00pm"
+                                                    data-parsley-required="true" />
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mandatory">
+                                                <label for="accom" class="form-label">Accommodation Provided</label>
+                                                <select class="form-select" id="accommodation" name="accommodation"
+                                                    data-parsley-required="true">
+                                                    <option value="Y">Yes</option>
+                                                    <option value="N">No</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                </div>
+            </form>
+        </div>
+
+            {% include "footer.html" %}
+        </div>
+    </div>
+    </div>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/extensions/jquery/jquery.min.js"></script>
+    <script src="assets/js/pages/simple-datatables.js"></script>
+    <script src="assets/extensions/parsleyjs/parsley.min.js"></script>
+    <script src="assets/js/pages/parsley.js"></script>
+    <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>>
+    <script src="assets/js/pages/sweetalert2.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            populateData();
+        });
+
+        //by default, disable the form
+        $("#jobPostForm :input").prop("disabled", true);
+        $("#save").prop("disabled", false);
+        $("#edit").prop("disabled", false);
+        $("#back").prop("disabled", false);
+        $("#backEdit").prop("disabled", false);
+        $("#save").hide();
+        $("#back").click(function () {
+            window.location.href = "/jobPosting";
+        });
+        $("#backEdit").hide();
+        $("#backEdit").click(function () {
+
+            $("#save").hide();
+            $("#edit").show();
+            $("#back").show();
+            $("#backEdit").hide();
+            $("#jobPostForm :input").prop("disabled", true);
+            $("#save").prop("disabled", false);
+            $("#edit").prop("disabled", false);
+            $("#back").prop("disabled", false);
+            $("#backEdit").prop("disabled", false);
+            populateData();
+        });
+
+        //populate the form with the job object
+        function populateData() {
+            $("#jobTitle").val(`{{job.jobTitle}}`);
+            $("#jobDesc").val(`{{job.jobDesc}}`);
+            $("#allowance").val(`{{job.allowance}}`);
+            $("#accessory").val(`{{job.accessoryProvide}}`);
+            $("#workingDay").val(`{{job.workingDay}}`);
+            $("#workingHour").val(`{{job.workingHour}}`);
+            $("#accommodation").val(`{{job.accommodation}}`);
+            if (`{{job.diploma}}` == "Y" && `{{job.degree}}` == "Y") {
+                $("#diplomaAndDegree").prop("checked", true);
+            } else if (`{{job.diploma}}` == "Y") {
+                $("#diploma").prop("checked", true);
+            } else if (`{{job.degree}}` == "Y") {
+                $("#degree").prop("checked", true);
+            }
+        }
+
+
+        //if edit button is clicked, allow user to edit the form
+        $("#edit").click(function () {
+            $("#jobPostForm :input").prop("disabled", false);
+            $("#save").prop("disabled", false);
+            $("#edit").prop("disabled", false);
+            $("#back").prop("disabled", false);
+            $("#backEdit").prop("disabled", false);
+            //hide edit button and show save button
+            $("#edit").hide();
+            $("#back").hide();
+            $("#save").show();
+            $("#backEdit").show();
+        });
+
+
+    </script>
+    {% if success %}
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Job Post Updated',
+            text: '{{success}}',
+        })
+    </script>
+    {% endif %}
+</body>
+
+</html>

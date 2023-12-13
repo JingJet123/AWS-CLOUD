@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Admin Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+
+    <link rel="stylesheet" href="https://github.com/downloads/lafeber/world-flags-sprite/flags32.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+    <style>
+        .theme-dark .swal2-success-circular-line-right,
+        .theme-dark .swal2-success-circular-line-left,
+        .theme-dark .swal2-success-fix {
+            background-color: #1e1e2d !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        {% set activePage = 'task' %}
+        {% include "adminSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "adminHeader.html" %}
+            <div id="main-content">
+
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-12 col-lg-8">
+                                <h3>Student Task Management</h3>
+                                <p class="text-subtitle text-muted">You can create, edit or delete internship program
+                                    task for student here</p>
+                            </div>
+                            <div class="col-12 col-lg-3 d-flex justify-content-end align-items-end experience">
+                                <button type="button" id="addTask" class="btn btn-primary me-1 mb-1">
+                                    Create New Task
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="main-content">
+                        <div class="card">
+                            <div class="card-body">
+                                <table id="table1" class="display nowrap" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Task ID</th>
+                                            <th>Task Title</th>
+                                            <th>Due Date</th>
+                                            <th>Attachment</th>
+                                            <th>Assign To</th>
+                                            <th>Action</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+
+    <form id="deleteForm" action="/DeleteTask" style="display: none;">
+        <input type="hidden" name="taskId" id="taskId">
+    </form>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+
+    <script src="assets/extensions/jquery/jquery.min.js"></script>
+    <script src="//code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="assets/js/pages/simple-datatables.js"></script>
+    <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>>
+    <script src="assets/js/pages/sweetalert2.js"></script>
+
+    {% if success %}
+
+    <script>
+        Swal.fire(
+            'Task Created!',
+            '{{success}}',
+            'success'
+        )
+    </script>
+    {% endif %}
+
+
+    {% if successDelete %}
+    <script>
+        Swal.fire(
+            'Task Deleted!',
+            '{{success}}',
+            'success'
+        )
+    </script>
+    {% endif %}
+
+    <script>
+        //define a list of task objects to be displayed in the table
+        var taskList = [];
+
+        {% for task in tasks %}
+        taskList.push({
+            "taskID": "{{ task.taskId }}",
+            "taskTitle": "{{ task.taskName }}",
+            "dueDate": "{{ task.dueDate }}",
+            "attachment": "{{ task.attachmentName }}",
+            "Diploma": "{{ task.diploma }}",
+            "Degree": "{{ task.degree }}"
+        });
+        {% endfor %}
+
+        function dataTablesWrap(data, type, row) {
+            return "<div class='text-wrap width-200'>" + data + "</div>";
+        }
+
+        //define datatable
+        new DataTable('#table1', {
+            data: taskList,
+            columns: [
+                { data: 'taskID' },
+                { data: 'taskTitle', render: dataTablesWrap },
+                { data: 'dueDate' },
+                { data: 'attachment' },
+                {
+                    data:
+                        function (row) {
+                            if (row.Diploma == "Y" && row.Degree == "Y") {
+                                return "Diploma & Degree";
+                            } else if (row.Diploma == "Y" && row.Degree == "N") {
+                                return "Diploma";
+                            } else if (row.Diploma == "N" && row.Degree == "Y") {
+                                return "Degree";
+                            }
+                        }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return "<a href='/adminTaskViewEdit?taskId=" + row.taskID + "' class='btn btn-primary'>View</a>";
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return "<button id='delete?" + row.taskID + "' type='button' class='btn btn-danger btn-sm'>Delete</button>";
+                    }
+                }
+            ]
+        });
+
+
+        //click add task button, goto add task page
+        $("#addTask").click(function () {
+            window.location.href = "/adminAddTask";
+        });
+
+        //click delete button, pop up confirmation message, if yes, delete the task
+        $('#table1').on('click', 'button', function () {
+            var taskId = $(this).attr('id').replace('delete?', '');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButton: 'Yes, delete it!',
+                cancelButton: 'No, keep it'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.forms.deleteForm.taskId.value = taskId;
+                    document.forms.deleteForm.action = "/DeleteTask";
+                    document.forms.deleteForm.submit();
+                }
+            })
+        });
+    </script>
+
+
+</body>
+
+</html>

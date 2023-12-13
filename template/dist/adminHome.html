@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Admin Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+    <link rel="stylesheet" href="assets/css/shared/iconly.css">
+</head>
+
+<body>
+    <div id="app">
+        {% set activePage = 'dashboard' %}
+        {% include "adminSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "adminHeader.html" %}
+            <div id="main-content">
+
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-12 col-md-6 order-md-1 order-last">
+                                <h3>Welcome Back, {{admin.name}}</h3>
+                                <p class="text-subtitle text-muted">ITP Administrative Dashboard</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="main-content">
+
+                        <div class="row">
+                            <div class="col col-lg-5">
+                                <div class="card">
+                                    <div class="card-body px-4 py-4-5">
+                                        <div class="row">
+                                            <div class="col-lg-2 d-flex justify-content-start ">
+                                                <div class="stats-icon purple mb-2">
+                                                    <i class="iconly-boldProfile"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-9">
+                                                <h6 class="text-muted font-semibold">Pending Student Company Request
+                                                </h6>
+                                                <h6 class="font-extrabold mb-0">{{allPendingCompReqCount}}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col col-lg-5">
+                                <div class="card">
+                                    <div class="card-body px-4 py-4-5">
+                                        <div class="row">
+                                            <div class="col-lg-2 d-flex justify-content-start ">
+                                                <div class="stats-icon purple mb-2">
+                                                    <i class="iconly-boldAdd-User"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <h6 class="text-muted font-semibold">Pending Company Registration</h6>
+                                                <h6 class="font-extrabold mb-0">{{allPendingCompCount}}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-4">
+                                <div class="card">
+                                    <div class="card-body px-4 py-4-5">
+                                        <div class="row">
+                                            <div class="col col-lg-3 d-flex justify-content-start ">
+                                                <div class="stats-icon blue mb-2">
+                                                    <i class="iconly-boldProfile"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col col-lg-9">
+                                                <h6 class="text-muted font-semibold">Total Student Company Request</h6>
+                                                <h6 class="font-extrabold mb-0">{{allCompanyReqCount}}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="card">
+                                    <div class="card-body px-4 py-4-5">
+                                        <div class="row">
+                                            <div class="col col-lg-4 d-flex justify-content-start ">
+                                                <div class="stats-icon green mb-2">
+                                                    <i class="iconly-boldAdd-User"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8 col-lg-8">
+                                                <h6 class="text-muted font-semibold">Total Registered Company</h6>
+                                                <h6 class="font-extrabold mb-0">{{allCompanyCount}}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg-3">
+                                <div class="card">
+                                    <div class="card-body px-4 py-4-5">
+                                        <div class="row">
+                                            <div class="col-md-4 col-lg-4 d-flex justify-content-start ">
+                                                <div class="stats-icon red mb-2">
+                                                    <i class="iconly-boldBookmark"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8 col-lg-8">
+                                                <h6 class="text-muted font-semibold">Total Assigned Task</h6>
+                                                <h6 class="font-extrabold mb-0">{{allTasksCount}}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+
+</body>
+
+</html>

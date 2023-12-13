@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Company Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+</head>
+
+<body>
+    <div id="app">
+        {# activePage is to determine which item to be active#}
+        {% set activePage = "applicant" %}
+        {% include "companySidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "companyHeader.html" %}
+            <div id="main-content">
+
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-12 col-md-6 order-md-1 order-last">
+                                <h3>Job Application List</h3>
+                                <p class="text-subtitle text-muted">View Your job applicant here</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="main-content">
+                        <div class="card">
+                            <div class="card-body">
+                                <table id="table1" class="display nowrap" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Apply Date</th>
+                                            <th>Student Name</th>
+                                            <th>Level</th>
+                                            <th>CGPA</th>
+                                            <th>Job ID</th>
+                                            <th>Job Title</th>
+                                            <th>Allowance</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/extensions/jquery/jquery.min.js"></script>
+    <script src="//code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="assets/js/pages/simple-datatables.js"></script>
+    <script>
+
+        var applicationList = [];
+        {% for applicant in applicantLists %}
+        applicationList.push({
+            applicationId: `{{applicant.applicationId}}`,
+            applyDate: `{{applicant.applyDate}}`,
+            studentName: `{{applicant.studentName}}`,
+            level: `{{applicant.level}}`,
+            cgpa: `{{applicant.cgpa}}`,
+            jobId: `{{applicant.jobId}}`,
+            jobTitle: `{{applicant.jobTitle}}`,
+            allowance: parseInt(`{{applicant.allowance}}`),
+            status: `{{applicant.applicationStatus}}`
+        });
+        {% endfor %}
+
+        //define datatable
+        var table = $('#table1').DataTable({
+            data: applicationList,
+            columns: [
+                { data: 'applicationId' },
+                { data: 'applyDate' },
+                { data: 'studentName' },
+                { data: 'level' },
+                { data: 'cgpa' },
+                { data: 'jobId' },
+                { data: 'jobTitle' },
+                { data: 'allowance' },
+                {
+                    data: function (row) {
+                        if (row.status == "Pending") {
+                            return '<span class="badge bg-warning">Pending</span>';
+                        } else if (row.status == "Approved") {
+                            return '<span class="badge bg-success">Approved</span>';
+                        } else {
+                            return '<span class="badge bg-danger">Rejected</span>';
+                        }
+                    }
+                },
+                {
+                    data:
+                        function (row) {
+                            return "<a href='/updateApplicant?appId=" + row.applicationId + "' class='btn btn-primary'>View</a>";
+                        }
+                }
+            ]
+        });
+    </script>
+
+</body>
+
+</html>

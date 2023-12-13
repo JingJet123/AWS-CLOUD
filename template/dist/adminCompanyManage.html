@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Admin Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+
+    <link rel="stylesheet" href="https://github.com/downloads/lafeber/world-flags-sprite/flags32.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+</head>
+
+<body>
+    <div id="app">
+        {% set activePage = 'company' %}
+        {% include "adminSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "adminHeader.html" %}
+            <div id="main-content">
+
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-12 col-md-6 order-md-1 order-last">
+                                <h3>Company List</h3>
+                                <p class="text-subtitle text-muted">These are the list of company in ITP
+                                    system</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="main-content">
+                        <div class="card">
+                            <div class="card-body">
+                                <table id="table1" class="display nowrap" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Company Name</th>
+                                            <th>Total Staff</th>
+                                            <th>Website</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+
+    <script src="assets/extensions/jquery/jquery.min.js"></script>
+    <script src="//code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="assets/js/pages/simple-datatables.js"></script>
+    <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>>
+    <script src="assets/js/pages/sweetalert2.js"></script>
+
+    <script>
+
+        var companies = [];
+
+        //get company list
+        {% for company in companyList %}
+        companies.push({
+            "companyId": `{{company.companyId}}`,
+            "companyName": `{{company.companyName}}`,
+            "totalStaffCount": parseInt(`{{company.totalStf}}`),
+            "companyWebsite": `{{company.website}}`,
+            "companyStatus": `{{company.companyStatus}}`
+        })
+        {% endfor %}
+
+        //define data table
+        var table = $('#table1').DataTable({
+            "data": companies,
+            "columns": [{
+                "data": "companyId"
+            },
+            {
+                "data": "companyName"
+            },
+            {
+                "data": "totalStaffCount"
+            },
+            {
+                "data": "companyWebsite",
+                "render": function (data, type, row) {
+                    if (data == "") {
+                        return "-";
+                    } else {
+                        return data;
+                    }
+                }
+            },
+            {
+                "data": function (row) {
+                    if (row.companyStatus == "Pending") {
+                        return '<span class="badge bg-warning">Pending</span>';
+                    } else if (row.companyStatus == "Approved") {
+                        return '<span class="badge bg-success">Approved</span>';
+                    } else {
+                        return '<span class="badge bg-danger">Rejected</span>';
+                    }
+                }
+            },
+            {
+                "data": null,
+                "render": function (data, type, row) {
+                    return '<button type="button" class="btn btn-primary">View</button>';
+                }
+            }
+            ]
+        });
+
+        //click view redirect to view company page
+        $('#table1').on('click', 'button', function () {
+            var data = table.row($(this).parents('tr')).data();
+            window.location.href = "/adminCompanyViewUpdate?compId=" + data.companyId;
+        });
+
+    </script>
+
+</body>
+
+</html>

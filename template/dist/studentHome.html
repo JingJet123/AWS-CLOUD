@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Student Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+</head>
+
+<body>
+
+    <div id="app">
+        {# activePage is to determine which item to be active#}
+        {% set activePage = "dashboard" %}
+        {% include "studentSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "studentHeader.html" %}
+            <div id="main-content">
+
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-12 col-md-6 order-md-1 order-last">
+                                <h3>Welcome Back, {{student.name}}</h3>
+                                <p class="text-subtitle text-muted">ITP Student Dashboard</p>
+                            </div>
+                        </div>
+                    </div>
+                    <section class="section">
+                        <div class="page-content">
+                            <div class="row">
+                                <div class="col-12 col-lg-8">
+                                    {% if internship == None %}
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4 class="card-title">You Have a Pending Submission: Internship
+                                                Documentation
+                                                <span class="badge bg-warning">Important</span>
+                                            </h4>
+                                            <p class="card-subtitle">Due Oct 24, 11:59 PM</p>
+                                        </div>
+                                        <div class="card-body">
+                                            IMPORTANT: Please submit the following report(s) before the deadline. Late
+                                            submission
+                                            will not be entertained.
+                                            <div class="row">
+                                                <div class="list-group col-6">
+                                                    <span class="list-group-item">Company Acceptance Form</span>
+                                                    <span class="list-group-item">Parent Acknowledgement Form</span>
+                                                    <span class="list-group-item">Letter of Indemnity</span>
+                                                </div>
+                                            </div>
+                                            <div class="row d-flex float-end">
+                                                <a href="/updateInternship" class="btn icon icon-left btn-info"><i
+                                                        data-feather="info"></i>
+                                                    Info</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Congratulations! You have secured your internship
+                                                <span class="badge bg-success">Secured</span>
+                                            </h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Company Name: {{internship.companyName}}</p>
+                                            <p>Company Address: {{internship.companyAddress}}</p>
+
+                                            <div class="row">
+                                                <div class="list-group col-6">
+                                                    <span class="list-group-item">Company Supervisor:
+                                                        {{internship.companySupervisorName}}</span>
+                                                    <span
+                                                        class="list-group-item text-muted">{{internship.companySupervisorEmail}}</span>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="row d-flex float-end">
+                                                <a href="#" class="btn icon icon-left btn-info"><i
+                                                        data-feather="info"></i>
+                                                    Info</a>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Assignment Quick Stats</h4>
+                                            <p class="card-subtitle">Statistics regarding your task submission</p>
+                                        </div>
+                                        <div class="card-content">
+                                            <div class="card-body">
+                                                <ul class="list-group">
+                                                    <li
+                                                        class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <span> Pending</span>
+                                                        <span
+                                                            class="badge bg-primary badge-pill badge-round ml-1">{{pendingTaskCount}}</span>
+                                                    </li>
+                                                    <li
+                                                        class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <span> Approved</span>
+                                                        <span
+                                                            class="badge bg-success badge-pill badge-round ml-1">{{approvedTaskCount}}</span>
+                                                    </li>
+                                                    <li
+                                                        class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <span> Rejected</span>
+                                                        <span
+                                                            class="badge bg-danger badge-pill badge-round ml-1">{{rejectedTaskCount}}</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                {% include "footer.html" %}
+
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+
+</body>
+
+</html>

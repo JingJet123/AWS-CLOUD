@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Admin Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+    <style>
+        .theme-dark .swal2-success-circular-line-right,
+        .theme-dark .swal2-success-circular-line-left,
+        .theme-dark .swal2-success-fix {
+            background-color: #1e1e2d !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        {% set activePage = 'profile' %}
+        {% include "adminSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "adminHeader.html" %}
+            <div id="main-content">
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-12 col-md-6 order-md-1 order-last">
+                                <h3>My Profile</h3>
+                                <p class="text-subtitle text-muted">You can edit your profile here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="main-content">
+                    <form id="myForm" class="form" data-parsley-validate method="POST" action="/UpdateAdminProfile">
+                        <div class="d-flex justify-content-end align-items-end experience">
+                            <button type="button" id="edit" class="btn btn-primary me-1 mb-1">
+                                Edit Profile
+                            </button>
+                            <button type="submit" style="display: none;" id="save" class="btn btn-primary me-1 mb-1">
+                                Save
+                            </button>
+                            <button type="button" style="display: none;" id="back" class="btn btn-danger me-1 mb-1">
+                                Back
+                            </button>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Account Settings</h4>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12 col-lg-6">
+                                            <div class="form-group">
+                                                <label for="helpInputTop">Username</label>
+                                                <input type="text" class="form-control" id="username" />
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-lg-6">
+                                            <div class="form-group mandatory">
+                                                <label for="helpInputTop">Password</label>
+                                                <input type="password" class="form-control" id="password"
+                                                    data-parsley-required="true" />
+                                                <input type="hidden" name="oldPassword" value="{{admin.password}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="resetpassword" class="row" style="display: none;">
+                                        <div class="col-12 col-lg-6">
+                                            <div class="form-group">
+                                                <label for="helpInputTop">Set New Password</label>
+                                                <input type="password" class="form-control" id="newpassword" />
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-lg-6">
+                                            <div class="form-group mandatory">
+                                                <label for="helpInputTop">Confirm New Password</label>
+                                                <input type="password" class="form-control" id="newpasswordmatch"
+                                                    name="newPassword" data-parsley-required="true" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Personal Information</h4>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12 col-lg-6">
+                                            <div class="form-group mandatory">
+                                                <label for="helpInputTop">Name</label>
+                                                <input type="text" class="form-control" id="name" name="name"
+                                                    data-parsley-required="true" />
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-lg-6">
+                                            <div class="form-group mandatory">
+                                                <label for="helpInputTop">Email</label>
+                                                <input type="text" class="form-control" id="email" name="email"
+                                                    data-parsley-required="true" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/extensions/jquery/jquery.min.js"></script>
+
+    <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>>
+    <script src="assets/js/pages/sweetalert2.js"></script>
+
+
+    <script>
+
+        $(document).ready(function () {
+            //disable all input fields
+            $("#username").prop("disabled", true);
+            $("#password").prop("disabled", true);
+            $("#name").prop("disabled", true);
+            $("#email").prop("disabled", true);
+
+            //set value for all input fields
+            $("#username").val(`{{admin.username}}`);
+            $("#password").val(`{{admin.password}}`);
+            $("#name").val(`{{admin.name}}`);
+            $("#email").val(`{{admin.email}}`);
+
+            $("#edit").click(function () {
+                document.getElementById("resetpassword").style.display = "flex";
+                document.getElementById("name").disabled = false;
+                document.getElementById("email").disabled = false;
+                document.getElementById("edit").style.display = "none";
+                document.getElementById("save").style.display = "block";
+                document.getElementById("back").style.display = "block";
+            });
+
+            $("#back").click(function () {
+                $("#edit").show();
+                $("#save").hide();
+                $("#back").hide();
+                $("#name").val(`{{admin.name}}`);
+                $("#email").val(`{{admin.email}}`);
+                $("#email").prop("disabled", true);
+                $("#password").prop("disabled", true);
+                $("#name").prop("disabled", true);
+                $("#username").prop("disabled", true);
+                $("#resetpassword").hide();
+            });
+
+            //save changes
+            $("#myForm").submit(function (e) {
+                //if new password is not empty
+                if ($("#newpassword").val() != "") {
+                    //if new password and confirm new password are not the same
+                    if ($("#newpassword").val() != $("#newpasswordmatch").val()) {
+                        e.preventDefault();
+                        //sweet alert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'New password does not match with confirm new password!'
+                        })
+                    }
+                }
+            });
+        });
+    </script>
+
+    {% if success %}
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Profile Updated!',
+            text: '{{success}}'
+        })
+    </script>
+    {% endif %}
+
+</body>
+
+</html>

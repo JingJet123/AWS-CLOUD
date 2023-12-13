@@ -1,0 +1,28 @@
+{% if company.companyStatus != "Approved" %}
+
+<div class="row" id="alert-notapproved">
+    <div class="card">
+        <div class="card-body">
+            <div class="card-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-danger" role="alert">
+                            <h4 class="alert-heading">Account Not Activated</h4>
+                            <p> Your account is not activated yet. After 2-3 days, try
+                                checking again and if approved, you may post and accept
+                                internships in the platform (if students applied). Please
+                                contact
+                                administrator to activate your account if there is any
+                                emergency. </p>
+                            <hr>
+                            <p class="mb-0">Click <a href="/login">here</a> to go back to
+                                login page.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}

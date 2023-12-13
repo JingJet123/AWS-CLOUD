@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Lecturer Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+</head>
+
+<body>
+    <div id="app">
+        {% set activePage = "student" %}
+        {% include "supervisorSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "supervisorHeader.html" %}
+
+            <div id="main-content">
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="page-title">
+                            <div class="row">
+                                <div class="col-12 col-md-6 order-md-1 order-last">
+                                    <h3>My Students</h3>
+                                    <p class="text-subtitle text-muted">View and Track Your students progress here.</p>
+                                </div>
+                                <div class="col-12 col-md-6 order-md-2 order-first">
+                                    <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                                        <ol class="breadcrumb">
+                                            <li class="breadcrumb-item"><a href="/supervisorHome">Dashboard</a></li>
+                                            <li class="breadcrumb-item active" aria-current="page">My students</li>
+                                        </ol>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="main-content">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="col-12 col-lg-8 col-md-8">
+                                    <div class="form-group mb-3">
+                                        <label for="form-check" class="form-label">Select One Category to View</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="viewLevel"
+                                                value="diploma" id="diploma">
+                                            <label class="form-check-label" for="diploma">
+                                                Diploma Student
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="viewLevel" value="degree"
+                                                id="degree">
+                                            <label class="form-check-label" for="degree">
+                                                Bachelor Student
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row d-flex justify-content-end">
+                                    <div class="col-12 col-lg-7 col-md-7">
+                                        <h4 class="card-title" id="levelViewing"></h4>
+                                    </div>
+                                    <div class="col-12 col-lg-5 col-md-5">
+                                        <p class="card-subtitle">Report Status:</p>
+                                        <span class="badge bg-success me-1 mb-1">Approved</span>
+                                        <span class="badge bg-warning me-1 mb-1">Submitted</span>
+                                        <span class="badge bg-danger me-1 mb-1">Rejected</span>
+                                        <span class="badge bg-secondary me-1 mb-1">Pending</span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="card-body">
+
+                                <table id="table1" class="display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Student Name</th>
+                                            <th>Gender</th>
+                                            <th>Programme</th>
+                                            <th>Contact</th>
+                                            <th>Company Name</th>
+                                            <th>Report</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/extensions/jquery/jquery.min.js"></script>
+    <script src="//code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="assets/js/pages/simple-datatables.js"></script>
+    <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>>
+    <script src="assets/js/pages/sweetalert2.js"></script>
+
+    <script>
+        var studentList = [];
+        {% for stud in supervisedStudents %}
+        studentList.push({
+            studentId: `{{stud.studId}}`,
+            studentName: `{{stud.name}}`,
+            level: `{{stud.eduLvl}}`,
+            gender: `{{stud.gender}}`,
+            programme: `{{stud.programme}}`,
+            contactNumber: `{{stud.contactNo}}`,
+            email: `{{stud.studEmail}}`,
+            companyName: `{{stud.companyName}}`,
+            submissions: [
+                {% for sub in stud.submissions %}
+                {
+                submissionId: `{{sub.submissionId}}`,
+                submissionStatus: `{{sub.reportStatus}}`,
+                taskId: `{{sub.taskId}}`,
+                submissionDate: `{{sub.dateSubmitted}}`,
+                reportUrl: `{{sub.report}}`
+            },
+            {% endfor %}
+            ]
+        })
+        {% endfor %}
+
+        console.log(studentList)
+        //function get diploma student list
+        function getDiplomaStudentList() {
+            var diplomaStudentList = [];
+            for (var i = 0; i < studentList.length; i++) {
+                if (studentList[i].level == "Diploma") {
+                    diplomaStudentList.push(studentList[i]);
+                }
+            }
+            return diplomaStudentList;
+        }
+
+        //function get degree student list
+        function getDegreeStudentList() {
+            var degreeStudentList = [];
+            for (var i = 0; i < studentList.length; i++) {
+                if (studentList[i].level == "Bachelor") {
+                    degreeStudentList.push(studentList[i]);
+                }
+            }
+            return degreeStudentList;
+        }
+
+        //default diploma selected
+        var selectedStudentList = getDiplomaStudentList();
+        $('input[type=radio][name=viewLevel][value=diploma]').prop('checked', true);
+        $('#levelViewing').html('Diploma Student');
+
+        //check radio button value, if diploma selected, get diploma student list, if degree selected, get degree student list
+        $('input[type=radio][name=viewLevel]').change(function () {
+            if (this.value == 'diploma') {
+                selectedStudentList = getDiplomaStudentList();
+                $('#levelViewing').html('Diploma Student');
+            } else if (this.value == 'degree') {
+                selectedStudentList = getDegreeStudentList();
+                $('#levelViewing').html('Bachelor Student');
+            }
+            //clear table
+            $('#table1').DataTable().clear().draw();
+            //add data to table
+            $('#table1').DataTable().rows.add(selectedStudentList).draw();
+        });
+
+        //define datatable
+        new DataTable('#table1', {
+            data: selectedStudentList,
+            columns: [
+                {
+                    data: null, render: function (data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row, meta) {
+                        return row.studentName + '<br>' + '[' + row.studentId + ']' + '<br><a href="/supervisorStudentView?studentEmail=' + row.email + '" class="btn btn-primary">View Student</a>';
+
+                    }
+                },
+                { data: 'gender' },
+                { data: 'programme' },
+                {
+                    data: null,
+                    render: function (data, type, row, meta) {
+                        return 'Tel: ' + row.contactNumber + '<br> Email: ' + row.email;
+                    }
+                },
+                { data: 'companyName' },
+                {
+                    width: "250px",
+                    data:
+                        function (row) {
+                            var submissionList = row.submissions;
+                            console.log(submissionList)
+                            var submissionButton = "";
+                            for (var i = 0; i < submissionList.length; i++) {
+                                if (submissionList[i].submissionStatus == "Approved") {
+                                    submissionButton += "<span class='badge bg-success me-1 mb-1'>" + (i + 1) + "</span>";
+                                } else if (submissionList[i].submissionStatus == "Rejected") {
+                                    submissionButton += "<span class='badge bg-danger me-1 mb-1'>" + (i + 1) + "</span>";
+                                } else if (submissionList[i].submissionDate != "None") {
+                                    submissionButton += "<span class='badge bg-warning me-1 mb-1'>" + (i + 1) + "</span>";
+                                } else {
+                                    submissionButton += "<span class='badge bg-secondary me-1 mb-1'>" + (i + 1) + "</span>";
+                                }
+                            }
+                            submissionButton += "<br><a href='/supervisorStudentReportView?studentEmail=" + row.email + "' class='btn btn-primary me-1 mb-1'>View</a>";
+                            return submissionButton;
+                        }
+                },
+            ]
+        });
+
+
+
+
+
+    </script>
+
+
+</body>
+
+</html>

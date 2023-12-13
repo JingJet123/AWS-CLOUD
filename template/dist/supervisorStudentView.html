@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Lecturer Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+</head>
+
+<body>
+    <div id="app">
+        {% set activePage = "student" %}
+        {% include "supervisorSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "supervisorHeader.html" %}
+
+            <div id="main-content">
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="page-title">
+                            <div class="row">
+                                <div class="col-12 col-md-6 order-md-1 order-last">
+                                    <h3>My Students</h3>
+                                    <p class="text-subtitle text-muted">Student Detail</p>
+                                </div>
+                                <div class="col-12 col-md-6 order-md-2 order-first">
+                                    <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                                        <ol class="breadcrumb">
+                                            <li class="breadcrumb-item"><a href="/supervisorHome">Dashboard</a></li>
+                                            <li class="breadcrumb-item"><a href="/studentProgress">My Students</a></li>
+                                            <li class="breadcrumb-item active" aria-current="page">Student Detail</li>
+                                        </ol>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="main-content">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row d-flex justify-content-lg-start">
+                                        <div class="col-12 col-lg-1 col-md-1">
+                                            <a href="/studentProgress" id="editStudent"
+                                                class="btn btn-primary me-1 mb-1">
+                                                Back
+                                            </a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <h4 class="card-title my-2">Student Details</h4>
+                                        </div>
+                                    </div>
+
+                                    <div class="row d-flex justify-content-center">
+                                        <div class="col-12 col-lg-2 col-md-2 "><img class="card-img-top"
+                                                id="studentProfile" />
+                                        </div>
+                                    </div>
+
+                                    <div class="card-content">
+
+                                        <div class="card-body">
+                                            <hr>
+                                            <div class="row my-3">
+                                                <div class="col-12 col-lg-6">
+                                                    <h6 class="card-subtitle">Student ID</h6>
+                                                    <p id="studentId" class="card-text"></p>
+                                                </div>
+                                                <div class="col-12 col-lg-6">
+                                                    <h6 class="card-subtitle">Name </h6>
+                                                    <p id="studentName" class="card-text"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row my-3">
+                                                <div class="col-12 col-lg-6">
+                                                    <h6 class="card-subtitle">Education Level </h6>
+                                                    <p id="level" class="card-text"></p>
+                                                </div>
+                                                <div class="col-12 col-lg-6">
+                                                    <h6 class="card-subtitle">Programme</h6>
+                                                    <p id="programme" class="card-text"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row my-3">
+                                                <div class="col-12 col-lg-6">
+                                                    <h6 class="card-subtitle">Cohort</h6>
+                                                    <p id="cohort" class="card-text"></p>
+                                                </div>
+                                                <div class="col-12 col-lg-6">
+                                                    <h6 class="card-subtitle">Tutorial Group</h6>
+                                                    <p id="tutorialGroup" class="card-text"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row my-3">
+                                                <div class="col-12 col-lg-6">
+                                                    <h6 class="card-subtitle">Address</h6>
+                                                    <p id="studentAddress" class="card-text"></p>
+                                                </div>
+                                                <div class="col-12 col-lg-6">
+                                                    <h6 class="card-subtitle">Health Remark </h6>
+                                                    <p id="healthRemark" class="card-text"></p>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row my-3">
+                                                <div class="col-12 col-lg-4">
+                                                    <h6 class="card-subtitle">Personal Email</h6>
+                                                    <a id="personalEmail" class="card-text"></a>
+                                                </div>
+                                                <div class="col-12 col-lg-4">
+                                                    <h6 class="card-subtitle">School Email</h6>
+                                                    <a id="schoolEmail" class="card-text"></a>
+                                                </div>
+                                                <div class="col-12 col-lg-4">
+                                                    <h6 class="card-subtitle">Contact No</h6>
+                                                    <p id="studentContact" class="card-text"></p>
+                                                </div>
+                                            </div>
+
+                                            <div class="row my-3">
+                                                <div class="col-12 col-lg-4">
+                                                    <h6 class="card-subtitle">Gender</h6>
+                                                    <p id="studentGender" class="card-text"></p>
+                                                </div>
+                                                <div class="col-12 col-lg-4">
+                                                    <h6 class="card-subtitle">Own Transport</h6>
+                                                    <p id="ownTransport" class="card-text"></p>
+                                                </div>
+                                                <div class="col-12 col-lg-4">
+                                                    <h6 class="card-subtitle">CGPA</h6>
+                                                    <p id="studentCgpa" class="card-text"></p>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row my-3">
+                                                {% if internship %}
+                                                <div class="col-12 col-lg-6">
+                                                    <h6 class="card-subtitle">Company Name</h6>
+                                                    <p id="companyName" class="card-text">{{internship.companyName}}</p>
+                                                </div>
+                                                <div class="col-12 col-lg-6">
+                                                    <h6 class="card-subtitle">Company Address</h6>
+                                                    <p id="companyAddress" class="card-text">{{internship.companyAddress}}</p>
+                                                </div>
+                                                {% else %}
+                                                <div class="col-lg-12">
+                                                    <h6 class="card-subtitle badge bg-warning" style="font-size: large;">Has Not Secured Internship Placement Yet</h6>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {% include "footer.html" %}
+                </div>
+            </div>
+        </div>
+        <script src="assets/js/bootstrap.js"></script>
+        <script src="assets/js/app.js"></script>
+        <script src="assets/extensions/jquery/jquery.min.js"></script>
+        <script src="//code.jquery.com/jquery-3.7.0.js"></script>
+        <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="assets/js/pages/simple-datatables.js"></script>
+        <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>>
+        <script src="assets/js/pages/sweetalert2.js"></script>
+
+        <script>
+            //define a list of student object with student name, student id, gender, programme, contact number, email, company name
+            var student = {
+                studentId: `{{student.studId}}`,
+                studentName: `{{student.name}}`,
+                profile: `{{student.profilePic}}`,
+                programme: `{{student.programme}}`,
+                gender: `{{student.gender}}`,
+                ownTransport: `{{student.ownTransport}}`,
+                cohort: `{{student.cohort}}`,
+                tutorialGroup: `{{student.tutGrp}}`,
+                level: `{{student.eduLvl}}`,
+                cgpa: parseFloat(`{{student.latestCgpa}}`).toFixed(4),
+                schoolEmail: `{{student.studEmail}}`,
+                personalEmail: `{{student.personalEmail}}`,
+                phone: `{{student.contactNo}}`,
+                address: `{{student.permAddr}}`,
+                healthRemark: `{{student.healthRemark}}`,
+            };
+
+            //populate student details to the card
+            document.getElementById("studentProfile").src = student.profile;
+            document.getElementById("studentName").innerHTML = student.studentName;
+            document.getElementById("studentId").innerHTML = student.studentId;
+            document.getElementById("level").innerHTML = student.level;
+            document.getElementById("programme").innerHTML = student.programme;
+            document.getElementById("personalEmail").innerHTML = student.personalEmail;
+            document.getElementById("personalEmail").href = "mailto:" + student.personalEmail;
+            document.getElementById("schoolEmail").innerHTML = student.schoolEmail;
+            document.getElementById("schoolEmail").href = "mailto:" + student.schoolEmail;
+            document.getElementById("studentContact").innerHTML = student.phone;
+            document.getElementById("cohort").innerHTML = student.cohort;
+            document.getElementById("tutorialGroup").innerHTML = student.tutorialGroup;
+
+            if (student.gender == "F") {
+                document.getElementById("studentGender").innerHTML = "Female";
+            } else if (student.gender == "M") {
+                document.getElementById("studentGender").innerHTML = "Male";
+            }
+            if (student.ownTransport == "Y") {
+                document.getElementById("ownTransport").innerHTML = "Yes";
+            } else if (student.ownTransport == "N") {
+                document.getElementById("ownTransport").innerHTML = "No";
+            }
+            document.getElementById("studentCgpa").innerHTML = student.cgpa;
+            document.getElementById("studentAddress").innerHTML = student.address;
+            if (student.healthRemark == "") {
+                document.getElementById("healthRemark").innerHTML = "None";
+            } else {
+                document.getElementById("healthRemark").innerHTML = student.healthRemark;
+            }
+
+
+
+
+
+        </script>
+
+
+</body>
+
+</html>

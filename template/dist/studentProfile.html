@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Student Profile</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="stylesheet" href="assets/css/pages/profile.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+
+    <style>
+        .form-select {
+            color: #c2c2d9 !important;
+        }
+
+        .theme-dark .swal2-success-circular-line-right,
+        .theme-dark .swal2-success-circular-line-left,
+        .theme-dark .swal2-success-fix {
+            background-color: #1e1e2d !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        {# activePage is to determine which item to be active#}
+        {% set activePage = "profile" %}
+        {# subActivePage is to determine which sub item to be active#}
+        {% set subActivePage = "myProfile" %}
+        {% include "studentSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "studentHeader.html" %}
+            <div id="main-content">
+
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-12 order-md-1 order-last">
+                                <h3>My Profile</h3>
+                                <p class="text-subtitle text-muted">You can edit the field, but not all of them. Contact
+                                    ITP Committee for any modification on non-editable field(s)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <form id="myForm" class="form" data-parsley-validate action="/UpdateStudProfile" method="POST"
+                        enctype="multipart/form-data">
+                        <section class="section">
+                            <div class="page-content">
+                                <div class="row">
+                                    <div class="col-md-3 border-right">
+                                        <div class="d-flex flex-column p-3 py-5">
+                                            <div class="profile-pic">
+                                                <label class="-label" for="file">
+                                                    <span class="glyphicon glyphicon-camera"></span>
+                                                    <span>Change Image</span>
+                                                </label>
+                                                <input id="file" type="file" accept="image/*" onchange="loadFile(event)"
+                                                    name="profile" />
+                                                <img src="{{student.profilePic}}" id="output" width="200" />
+                                            </div>
+
+                                            <div class="row mt-3">
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label for="studentName" class="form-label">Name</label>
+                                                        <input type="text" id="studentName" class="form-control"
+                                                            name="studentName" value="{{student.name}}" />
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label for="studentId" class="form-label">Student
+                                                            ID</label>
+                                                        <input type="text" id="studentId" class="form-control"
+                                                            name="studentId" value="{{student.studId}}" />
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <fieldset class="form-group">
+                                                        <label for="first-name-column" class="form-label">Cohort</label>
+                                                        <input type="text" id="cohort" class="form-control"
+                                                            name="cohort" value="{{student.cohort}}" />
+                                                    </fieldset>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label for="tutorialGroup" class="form-label">Tutorial
+                                                            Group</label>
+                                                        <input type="number" step="1" id="tutorialGroup"
+                                                            class="form-control" name="tutorialGroup"
+                                                            value="{{student.tutGrp}}" />
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label for="nric" class="form-label">NRIC</label>
+                                                        <input type="text" id="nric" class="form-control" name="nric"
+                                                            value="{{student.nric}}" />
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <fieldset class="form-group">
+                                                        <label for="gender" class="form-label">Gender</label>
+                                                        <select class="form-select" id="gender">
+                                                            <option value="" disabled selected hidden>Please Select One
+                                                            </option>
+                                                            <option value="F">Female</option>
+                                                            <option value="M">Male</option>
+                                                        </select>
+                                                    </fieldset>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 border-right">
+                                        <div class="p-3 py-5">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <h4 class="text-right">Profile Settings</h4>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="row">
+                                                    <fieldset class="form-group">
+                                                        <label for="first-name-column"
+                                                            class="form-label">Programme</label>
+                                                        <input type="text" class="form-control" id="programme"
+                                                            value="{{student.programme}}" />
+                                                    </fieldset>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label for="studentEmail" class="form-label">Student
+                                                            Email</label>
+                                                        <input type="email" id="studentEmail" class="form-control"
+                                                            name="studentEmail" value="{{student.studEmail}}" />
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group mandatory">
+                                                        <label for="cgpa" class="form-label">CGPA</label>
+                                                        <input type="text" id="cgpa" class="form-control" name="cgpa"
+                                                            placeholder="eg: 1.0 - 4.0" data-parsley-required="true"
+                                                            value="{{student.latestCgpa}}" />
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label for="supervisor" class="form-label">University
+                                                            Supervisor</label>
+                                                        <input type="text" id="supervisor" class="form-control"
+                                                            value="{{supervisor.name}}" disabled />
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label for="supervisorEmail" class="form-label">University
+                                                            Supervisor Email</label>
+                                                        <input type="text" id="supervisorEmail" class="form-control"
+                                                            value="{{supervisor.email}}"
+                                                            placeholder="eg: xxx@tarc.edu.my" disabled />
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="row">
+                                                    <fieldset class="form-group mandatory">
+                                                        <label for="transport" class="form-label">Own
+                                                            Transport</label>
+                                                        <select class="form-select" id="transport"
+                                                            data-parsley-required="true" name="transport">
+                                                            <option value="" disabled selected hidden>Please Select One
+                                                            </option>
+                                                            <option value="Y">Yes</option>
+                                                            <option value="N">No</option>
+                                                        </select>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group mb-3">
+                                                        <label for="healthRemark" class="form-label">Health
+                                                            Remarks</label>
+                                                        <textarea class="form-control" id="healthRemark" rows="3"
+                                                            name="healthRemark">{{student.healthRemark}}</textarea>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="p-3 py-5">
+                                            <div class="d-flex justify-content-end align-items-end experience">
+                                                <button type="button" id="edit" class="btn btn-primary me-1 mb-1">
+                                                    Edit Profile
+                                                </button>
+                                                <button type="submit" style="display: none;" id="save"
+                                                    class="btn btn-primary me-1 mb-1">
+                                                    Save
+                                                </button>
+                                                <button type="button" style="display: none;" id="back"
+                                                    class="btn btn-danger me-1 mb-1">
+                                                    Back
+                                                </button>
+                                            </div><br>
+                                            <div class="row">
+                                                <div class="form-group mandatory">
+                                                    <label for="personalEmail" class="form-label">Personal
+                                                        Email</label>
+                                                    <input type="email" id="personalEmail" class="form-control"
+                                                        name="personalEmail" placeholder="Any active Personal Email"
+                                                        value="{{student.personalEmail}}"
+                                                        data-parsley-required="true" />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group mandatory">
+                                                    <label for="mobile" class="form-label">Mobile
+                                                        Number</label>
+                                                    <input type="text" id="mobile" class="form-control" name="mobile"
+                                                        placeholder="e.g: 012-3456789" data-parsley-required="true"
+                                                        value="{{student.contactNo}}" />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group mb-3 mandatory">
+                                                    <label for="termAddress" class="form-label">Term
+                                                        Address</label>
+                                                    <textarea class="form-control" id="termAddress" rows="3"
+                                                        name="termAddr"
+                                                        data-parsley-required="true">{{student.termAddr}}</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group mb-3">
+                                                    <label for="permAddress" class="form-label">Permanent
+                                                        Address</label>
+                                                    <textarea class="form-control" id="permAddress"
+                                                        rows="3">{{student.permAddr}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </form>
+                </div>
+
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/extensions/jquery/jquery.min.js"></script>
+    <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>
+    <script src="assets/js/pages/sweetalert2.js"></script>
+
+    {% if success %}
+    <script>
+        //pop up sweet alert success
+        Swal.fire({
+            icon: 'success',
+            title: 'Profile Updated',
+            text: '{{success}}',
+            confirmButtonText: 'OK'
+        });
+    </script>
+    {% endif %}
+
+    <script>
+        var loadFile = function (event) {
+            var image = document.getElementById("output");
+            image.src = URL.createObjectURL(event.target.files[0]);
+        };
+
+        $("#gender").val("{{student.gender}}");
+        $("#transport").val("{{student.ownTransport}}");
+
+        // set disable for every field in the form
+        $("#myForm :input").prop("disabled", true);
+        $("#edit").prop("disabled", false);
+        $("#save").prop("disabled", false);
+        $("#back").prop("disabled", false);
+
+        //click edit button, enable cgpa, own transport, health remarks, personal email, mobile, term address
+        document.getElementById("edit").addEventListener("click", function () {
+            document.getElementById("file").disabled = false;
+            document.getElementById("cgpa").disabled = false;
+            document.getElementById("transport").disabled = false;
+            document.getElementById("healthRemark").disabled = false;
+            document.getElementById("personalEmail").disabled = false;
+            document.getElementById("mobile").disabled = false;
+            document.getElementById("termAddress").disabled = false;
+        });
+        //change edit button to save button
+        document.getElementById("edit").addEventListener("click", function () {
+            document.getElementById("edit").style.display = "none";
+            document.getElementById("save").style.display = "block";
+            document.getElementById("back").style.display = "block";
+        });
+
+        //click back button, disable cgpa, own transport, health remarks, personal email, mobile, term address
+        document.getElementById("back").addEventListener("click", function () {
+            $("#output").attr("src", "{{student.profilePic}}")
+            $("#cgpa").val("{{student.latestCgpa}}")
+            $("#transport").val("{{student.ownTransport}}")
+            $("#healthRemark").val("{{student.healthRemark}}")
+            $("#personalEmail").val("{{student.personalEmail}}")
+            $("#mobile").val("{{student.contactNo}}")
+            $("#termAddress").val("{{student.termAddr}}")
+            document.getElementById("file").disabled = true;
+            document.getElementById("cgpa").disabled = true;
+            document.getElementById("transport").disabled = true;
+            document.getElementById("healthRemark").disabled = true;
+            document.getElementById("personalEmail").disabled = true;
+            document.getElementById("mobile").disabled = true;
+            document.getElementById("termAddress").disabled = true;
+            //change save button to edit button
+            document.getElementById("back").style.display = "none";
+            document.getElementById("save").style.display = "none";
+            document.getElementById("edit").style.display = "block";
+        });
+
+    </script>
+
+
+
+</body>
+
+</html>

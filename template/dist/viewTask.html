@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Student Dashboard</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+    <style>
+        .theme-dark .swal2-success-circular-line-right,
+        .theme-dark .swal2-success-circular-line-left,
+        .theme-dark .swal2-success-fix {
+            background-color: #1e1e2d !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        {# activePage is to determine which item to be active#}
+        {% set activePage = "dashboard" %}
+        {% include "studentSidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "studentHeader.html" %}
+            <div id="main-content">
+
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-12 col-md-6 order-md-1 order-last">
+                                <h3>Task</h3>
+                                <p class="text-subtitle text-muted">View Your task detail here</p>
+                            </div>
+                        </div>
+                    </div>
+                    <section class="section">
+                        <div class="page-content">
+                            <div class="row">
+                                <div class="col-12 col-lg-8">
+                                    <div id="taskDisplay" class="card">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-lg-8">
+                                                    <h4 class="card-title" id="taskTitle"></h4>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="row">
+                                                        <div class="col-12 d-flex justify-content-end">
+                                                            <span
+                                                                class="badge {% if submitStatus== 'Pending'%}bg-primary{% elif submitStatus=='Submitted' %}bg-success{% else %}bg-danger{% endif %}"
+                                                                style="font-size:large">{{submitStatus}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="card-subtitle" id="taskDue"></p>
+                                            <hr>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text" id="taskDescription"></p>
+
+                                            <h6>Attachment</h6>
+                                            <p class="card-text" id="taskAttachment">
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                    <div id="taskSubmission" class="card">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <h4 class="card-title">Submit Your Work Here</h4>
+                                            </div>
+                                            <hr>
+                                        </div>
+                                        <div class="card-body">
+                                            <form id="myForm" name="myForm" methods="POST" action="/SubmitTask"
+                                                enctype="multipart/form-data">
+                                                Select files to upload:
+                                                <input type="hidden" name="submissionId"
+                                                    value="{{submission.submissionId}}" />
+                                                <input type="hidden" name="taskName" value="{{taskViewing.taskName}}" />
+                                                <input class="form-control" name="report" id="fileToUpload"
+                                                    accept="application/pdf" type="file" />
+
+                                                <div class="row mt-3">
+                                                    <ul style="list-style-type:none;" id="fileList">
+                                                        <li>No Files Selected</li>
+                                                    </ul>
+                                                </div>
+
+                                                <div class="row">
+                                                    <button type="button" id="submitBtn" name="submitBtn" {%if submitStatus=='Submitted'%}disabled{%endif%}
+                                                        class="btn btn-primary btn-block btn-lg shadow-lg mt-3">Submit</button>
+                                                </div>
+                                            </form>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </section>
+                </div>
+
+                {% include "footer.html" %}
+
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+
+    <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>
+    <script src="assets/js/pages/sweetalert2.js"></script>
+
+    <script>
+        //display taskViewing into corresponding html element
+        document.getElementById("taskTitle").innerHTML = `{{taskViewing.taskName}}`;
+        document.getElementById("taskDue").innerHTML = "Due " + `{{taskViewing.dueDate}}`;
+        document.getElementById("taskDescription").innerHTML = `{{taskViewing.taskDesc}}`;
+        document.getElementById("taskAttachment").innerHTML += '<a href="' + `{{taskViewing.attachmentURL}}` + '" download="' + `{{taskViewing.attachmentName}}` + '"><p>' + `{{taskViewing.attachmentName}}` + '</p></a>';
+
+        console.log(`{{submission.submissionId}}`)
+        //get the input and UL list
+        var input = document.getElementById('fileToUpload');
+        var list = document.getElementById('fileList');
+
+        //loop through the files and display it on fileList (Only One file can be selected now)
+        input.addEventListener('change', function () {
+            list.innerHTML = '';
+            for (var i = 0; i < input.files.length; ++i) {
+                list.innerHTML += '<li>' + input.files.item(i).name + '</li>';
+            }
+            if (!list.hasChildNodes()) {
+                list.innerHTML = '<li>No Files Selected</li>';
+            }
+        });
+
+        //validate file upload, if no file selected, alert user, else ask for confirmation
+        document.getElementById("submitBtn").addEventListener("click", function (event) {
+            event.preventDefault();
+            if (!input.files.length) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please select one file to upload!',
+                })
+            } else {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You will not be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, submit it!',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Submit the form
+                        document.forms.myForm.method = "POST";
+                        document.forms.myForm.action = "SubmitTask";
+                        document.forms.myForm.submit();
+                    } else if (
+                        result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                        Swal.fire(
+                            'Cancelled',
+                            'Your work is not submitted :)',
+                            'error'
+                        )
+                    }
+                })
+            }
+        });
+    </script>
+
+    {% if success %}
+    <script>
+        Swal.fire(
+            'Submitted!',
+            '{{success}}',
+            'success'
+        )
+    </script>
+    {% endif %}
+
+</body>
+
+</html>

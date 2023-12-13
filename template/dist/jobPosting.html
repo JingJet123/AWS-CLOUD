@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITP - Company Job</title>
+
+    <link rel="stylesheet" href="assets/css/main/app.css">
+    <link rel="stylesheet" href="assets/css/main/app-dark.css">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/logo/favicon.png" type="image/png">
+
+    <link rel="stylesheet" href="https://github.com/downloads/lafeber/world-flags-sprite/flags32.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="assets/extensions/sweetalert2/sweetalert2.min.css">
+
+    <style>
+        .theme-dark .swal2-success-circular-line-right,
+        .theme-dark .swal2-success-circular-line-left,
+        .theme-dark .swal2-success-fix {
+            background-color: #1e1e2d !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        {# activePage is to determine which item to be active#}
+        {% set activePage = "job" %}
+        {% include "companySidebar.html" %}
+        <div id="main" class='layout-navbar'>
+            {% include "companyHeader.html" %}
+            <div id="main-content">
+                {% include "company-alert.html" %}
+                <div class="page-heading">
+                    <div class="page-title">
+                        <div class="row">
+                            <div class="col-12 col-lg-9">
+                                <h3>Job Posting</h3>
+                                <p class="text-subtitle text-muted"> You may view your job post(s) here.</p>
+
+                            </div>
+                            <div class="col-12 col-lg-3 d-flex justify-content-end align-items-end experience">
+                                <button type="button" id="addJob" class="btn btn-primary me-1 mb-1">
+                                    Add Job Post
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div id="main-content">
+                        <div class="card">
+                            <div class="card-body">
+                                <table id="table1" class="display nowrap" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Job ID</th>
+                                            <th>Job Title</th>
+                                            <th>Allowance</th>
+                                            <th>Working Day</th>
+                                            <th>Working Hour</th>
+                                            <th>Open for</th>
+                                            <th>Action</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% include "footer.html" %}
+            </div>
+        </div>
+    </div>
+
+    <form id="deleteForm" action="/DeleteJobPost" style="display: none;">
+        <input type="hidden" name="jobId" id="jobId">
+    </form>
+
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/extensions/jquery/jquery.min.js"></script>
+    <script src="//code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="assets/js/pages/simple-datatables.js"></script>
+    <script src="assets/extensions/sweetalert2/sweetalert2.min.js"></script>>
+    <script src="assets/js/pages/sweetalert2.js"></script>
+
+    <script>
+
+        var jobPost = [];
+        {% for job in companyJobs %}
+        jobPost.push({
+            jobId: "{{job.jobId}}",
+            jobTitle: "{{job.jobTitle}}",
+            allowance: "{{job.allowance}}",
+            workingDay: "{{job.workingDay}}",
+            workingHour: "{{job.workingHour}}",
+            diploma: "{{job.diploma}}",
+            degree: "{{job.degree}}",
+        });
+        {% endfor %}
+
+
+        new DataTable('#table1', {
+            data: jobPost,
+            columns: [
+                { data: 'jobId' },
+                { data: 'jobTitle' },
+                { data: 'allowance' },
+                { data: 'workingDay' },
+                { data: 'workingHour' },
+                {
+                    data:
+                        function (row) {
+                            if (row.diploma == "Y" && row.degree == "Y") {
+                                return "Diploma & Degree";
+                            } else if (row.diploma == "Y" && row.degree == "N") {
+                                return "Diploma";
+                            } else if (row.diploma == "N" && row.degree == "Y") {
+                                return "Degree";
+                            } else {
+                                return "None";
+                            }
+                        }
+                },
+                {
+                    data:
+                        function (row) {
+                            console.log(row.jobId)
+                            return "<a href='/JobPostingDetailViewEdit?jobId=" + row.jobId + "' class='btn btn-primary'>View</a>";
+                        }
+                },
+                {
+                    data:
+                        function (row) {
+                            return "<button type='submit' id='delete?" + row.jobId + "' class='btn btn-danger'>Delete</button>";
+                        }
+                },
+            ]
+        });
+
+
+        //add job post
+        $("#addJob").click(function () {
+            //if company status is not approved, pop up sweet alert
+            if (`{{company.companyStatus}}` != "Approved") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Account Not Approved',
+                    text: 'Your company status is not approved yet!'
+                })
+                return;
+            }
+            window.location.href = "/jobAdding";
+        });
+
+        //click delete button, pop up sweet alert for confirmation
+        $("button[id^='delete?']").click(function () {
+            var jobId = $(this).attr('id').split('?')[1];
+            Swal.fire({
+                title: 'Are you sure to delete Job (ID:' + jobId + ')?',
+                text: "All the applications related to this job will be deleted as well.",
+                icon: 'warning',
+
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+
+                confirmButtonText: 'Yes, delete it!'
+            })
+            //if user click yes, delete the job post
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        document.forms.deleteForm.jobId.value = jobId;
+                        document.forms.deleteForm.action = "/DeleteJobPost";
+                        document.forms.deleteForm.submit(); 
+                    }
+                })
+        });
+
+    </script>
+
+    {% if success %}
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Job Added',
+            text: '{{success}}'
+        })
+    </script>
+    {% endif %}
+
+
+    {% if deleted %} 
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Job Deleted',
+            text: '{{deleted}}'
+        })
+    </script>
+    {% endif %}
+
+</body>
+
+</html>
